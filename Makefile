@@ -316,7 +316,7 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes
 ASM_DIRS :=
 
-ifeq (,$(findstring RAPHNET,${CONTROLLER_API}))
+ifneq (,$(findstring RAPHNET,${CONTROLLER_API}))
   SRC_DIRS += src/pc/controller/raphnet
 endif
 
