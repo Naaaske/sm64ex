@@ -65,7 +65,7 @@ RENDER_API ?= GL
 WINDOW_API ?= SDL2
 # Audio backends: SDL1, SDL2
 AUDIO_API ?= SDL2
-# Controller backends (can have multiple, space separated): SDL2, SDL1
+# Controller backends (can have multiple, space separated): SDL2, SDL1, RAPHNET
 CONTROLLER_API ?= SDL2
 
 # Misc settings for EXTERNAL_DATA
@@ -315,6 +315,10 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 # Hi, I'm a PC
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes
 ASM_DIRS :=
+
+ifeq (,$(findstring RAPHNET,${CONTROLLER_API}))
+  SRC_DIRS += src/pc/controller/raphnet
+endif
 
 ifeq ($(DISCORDRPC),1)
   SRC_DIRS += src/pc/discord
@@ -571,6 +575,10 @@ else ifeq ($(TARGET_WEB),1)
 else
   CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(PLATFORM_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
   CFLAGS := $(OPT_FLAGS) $(PLATFORM_CFLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
+endif
+
+ifneq (,$(findstring RAPHNET,${CONTROLLER_API}))
+  BACKEND_LDFLAGS += -lhidapi
 endif
 
 # Check for enhancement options
